@@ -1,0 +1,17 @@
+---
+- name: Save Cisco configuration
+  hosts: switches
+  gather_facts: false
+
+  collections:
+    - cisco.ios
+
+  tasks:
+
+    - name: Save running configuration
+      cisco.ios.ios_config:
+        save_when: always
+
+    - name: Confirmation
+      debug:
+        msg: "Configuration sauvegardée avec succès"
