@@ -1,0 +1,42 @@
+---
+- name: Check connectivity
+  cisco.ios.ios_command:
+    commands:
+      - show clock
+
+- name: Backup and Audit Cisco Switches
+  hosts: switches
+  gather_facts: false
+
+  collections:
+    - cisco.ios
+
+  tasks:
+
+    - name: Get hostname
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include hostname
+      register: hostname_result
+
+    - name: Display hostname
+      debug:
+        var: hostname_result.stdout_lines
+
+    - name: Get VLAN information
+      cisco.ios.ios_command:
+        commands:
+          - show vlan brief
+      register: vlan_result
+
+    - name: Display VLANs
+      debug:
+        var: vlan_result.stdout_lines
+
+    - name: Save configuration
+      cisco.ios.ios_config:
+        save_when: always
+
+    - name: Success message
+      debug:
+        msg: "Backup completed"
